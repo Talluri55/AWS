@@ -3,7 +3,7 @@ name: CI - Build and Push to ECR
 on:
   push:
     branches:
-      - master   # or main, check your repo’s default branch
+      - master   # or main, check your repo default branch
 
 jobs:
   build-and-push:
