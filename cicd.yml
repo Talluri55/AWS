@@ -1,59 +1,61 @@
-name: CI/CD Pipeline for EKS
+name: CI Pipeline
 
 on:
   push:
     branches:
-      - main   # Change if you deploy from another branch
+      - main
+  pull_request:
 
 jobs:
-  build-test-deploy:
+  build-test-lint-deploy:
     runs-on: ubuntu-latest
 
     steps:
-      # 1. Checkout code
-      - name: Checkout code
-        uses: actions/checkout@v3
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
 
-      # 2. Run Unit Tests (example for Node.js)
+      # Set up Node.js (example — change if you use Python/Java/etc.)
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: '18'
-      - name: Install dependencies & run tests
-        run: |
-          npm install
-          npm test
+          node-version: 18
 
-      # 3. Configure AWS credentials
+      # Install dependencies
+      - name: Install dependencies
+        run: npm install
+
+      # Lint
+      - name: Run lint
+        run: npm run lint
+
+      # Test
+      - name: Run tests
+        run: npm test
+
+      # Build (optional — if you have a build step)
+      - name: Build project
+        run: npm run build
+
+      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: us-east-1   # change region
+          aws-region: us-east-1   # change to your region
 
-      # 4. Login to Amazon ECR
+      # Login to Amazon ECR
       - name: Login to Amazon ECR
-        id: ecr-login
+        id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # 5. Build, Tag & Push Docker Image
-      - name: Build and Push Docker image
+      # Build, tag, and push the image to ECR
+      - name: Build, tag, and push Docker image
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: my-app-repo   # change to your repo name
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          IMAGE_TAG=${GITHUB_SHA}   # use commit SHA for unique tag
-          ECR_REGISTRY=${{ steps.ecr-login.outputs.registry }}
-          ECR_REPOSITORY=my-web-app
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-          echo "IMAGE=$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG" >> $GITHUB_ENV
-
-      # 6. Update Kubeconfig for EKS
-      - name: Update kubeconfig for EKS
-        run: |
-          aws eks update-kubeconfig --region us-east-1 --name my-eks-cluster
-
-      # 7. Deploy to EKS
-      - name: Deploy to EKS
-        run: |
-          kubectl set image deployment/web-deployment web=${{ env.IMAGE }}
-          kubectl rollout status deployment/web-deployment
