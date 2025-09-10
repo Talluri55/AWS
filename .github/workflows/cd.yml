@@ -27,7 +27,7 @@ jobs:
 
       # 3. Update kubeconfig so kubectl can talk to your EKS cluster
       - name: Update kubeconfig for EKS
-        run: aws eks update-kubeconfig --name <test-cluster> --region ${{ secrets.AWS_REGION }}
+        run: aws eks update-kubeconfig --name test-cluster --region ${{ secrets.AWS_REGION }}
 
       # 4. Deploy manifests
       - name: Deploy to EKS
