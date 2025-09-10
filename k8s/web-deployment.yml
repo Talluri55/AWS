@@ -1,0 +1,24 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: web-deployment
+  labels:
+    app: web
+spec:
+  replicas: 3   # run 3 pods for high availability
+  selector:
+    matchLabels:
+      app: web
+  template:
+    metadata:
+      labels:
+        app: web
+    spec:
+      containers:
+      - name: web-container
+        image: <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/test-web-app:latest
+        ports:
+        - containerPort: 80
+        imagePullPolicy: Always
+      imagePullSecrets:
+      - name: ecr-secret   # secret to pull from private ECR
