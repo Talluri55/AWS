@@ -3,9 +3,10 @@ kind: Service
 metadata:
   name: web-service
 spec:
-  type: LoadBalancer   # AWS will create an ELB/NLB for you
+  type: LoadBalancer
   selector:
     app: web
   ports:
-  - port: 80           # exposed port
-    targetPort: 80     # container port
+    - port: 80
+      targetPort: 3000
+

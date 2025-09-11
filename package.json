@@ -1,15 +1,12 @@
 {
-  "name": "my-app",
+  "name": "my-web-app",
   "version": "1.0.0",
-  "description": "My sample Node.js app",
-  "main": "index.js",
+  "description": "Simple Node.js web app for EKS CI/CD demo",
+  "main": "app.js",
   "scripts": {
-    "start": "node index.js",
-    "test": "echo \"No tests yet\" && exit 0"
+    "start": "node app.js",
+    "test": "echo \"✅ No tests configured yet\" && exit 0"
   },
-  "keywords": [],
-  "author": "Your Name",
-  "license": "MIT",
   "dependencies": {
     "express": "^4.18.2"
   }
