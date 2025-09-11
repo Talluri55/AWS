@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web-container
-        image: <AWS_ACCOUNT_ID>.dkr.ecr.us-east-1.amazonaws.com/test-web-app:latest
+        image: 637423260681.dkr.ecr.us-east-1.amazonaws.com/test-web-app:latest
         ports:
         - containerPort: 80
         imagePullPolicy: Always
