@@ -30,7 +30,7 @@ jobs:
       - name: Build & Push Web Server image
         run: |
           ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY=web-server
+          ECR_REPOSITORY=test-web-app
           IMAGE_TAG=latest
 
           cd web-server
@@ -48,7 +48,7 @@ jobs:
       - name: Build & Push App Server image
         run: |
           ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
-          ECR_REPOSITORY=app-server
+          ECR_REPOSITORY=test-app-server
           IMAGE_TAG=latest
 
           cd app-server
