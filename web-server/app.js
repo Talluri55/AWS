@@ -1,12 +1,19 @@
 const express = require("express");
+const axios = require("axios");
+
 const app = express();
-const PORT = process.env.PORT || 3000;
+const port = 3000;
+const appServerUrl = process.env.APP_SERVER_URL || "http://app-service:4000";
 
-app.get("/", (req, res) => {
-  res.send("🚀 Hello Manoj Talluri");
+app.get("/", async (req, res) => {
+  try {
+    const response = await axios.get(`${appServerUrl}/data`);
+    res.send(`<h1>Web Server</h1><p>App Server says: ${response.data}</p>`);
+  } catch (error) {
+    res.status(500).send("Error calling app server: " + error.message);
+  }
 });
 
-app.listen(PORT, () => {
-  console.log(`Server running on port ${PORT}`);
+app.listen(port, () => {
+  console.log(`Web server running on port ${port}`);
 });
-

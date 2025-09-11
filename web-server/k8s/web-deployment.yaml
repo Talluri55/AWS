@@ -15,7 +15,10 @@ spec:
         app: web
     spec:
       containers:
-        - name: web
-          image: 637423260681.dkr.ecr.us-east-1.amazonaws.com/test-web-app:latest
-          ports:
-            - containerPort: 3000
+      - name: web
+        image: 637423260681.dkr.ecr.us-east-1.amazonaws.com/web-server:latest
+        ports:
+        - containerPort: 3000
+        env:
+        - name: APP_SERVER_URL
+          value: "http://app-service:4000"   # Internal service endpoint

@@ -3,10 +3,10 @@ kind: Service
 metadata:
   name: app-service
 spec:
-  type: ClusterIP #internal-access-only
   selector:
-    app: app-server
+    app: app
   ports:
     - protocol: TCP
-      port: 80
+      port: 4000
       targetPort: 4000
+  type: ClusterIP
