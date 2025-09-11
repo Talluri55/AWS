@@ -7,6 +7,6 @@ spec:
   selector:
     app: web
   ports:
-    - port: 80
-      targetPort: 3000
-
+    - protocol: TCP
+      port: 80        # ELB will listen here
+      targetPort: 3000  # Forward to your container port
