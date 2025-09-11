@@ -54,3 +54,8 @@ jobs:
         run: |
           kubectl apply -f k8s/web-deployment.yaml
           kubectl apply -f k8s/web-service.yaml
+
+      - name: Restart deployment
+        run: |
+          kubectl rollout restart deployment web-deployment
+          kubectl rollout status deployment web-deployment
