@@ -44,7 +44,7 @@ jobs:
 
           echo "Building Web Server image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG ./test-web-app
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG ./web-server
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG
 
@@ -64,7 +64,7 @@ jobs:
 
           echo "Building App Server image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
 
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG ./test-app-server
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -t $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG ./App-server
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$SHA_TAG
 
