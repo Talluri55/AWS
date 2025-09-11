@@ -8,60 +8,63 @@ on:
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
 
-      # Install dependencies (optional for Node apps if you run tests)
-      - name: Install dependencies
-        run: npm install --prefix web-app
-
-      - name: Run automated tests
-        run: echo "Running tests... ✅"
-
-      # Configure AWS credentials
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ secrets.AWS_REGION }}
+          aws-region: us-east-1
 
-      # Authenticate Docker to ECR
-      - name: Login to Amazon ECR
-        run: |
-          aws ecr get-login-password --region ${{ secrets.AWS_REGION }} \
-          | docker login --username AWS --password-stdin ${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+      # --------------------
+      # Build & Push Web Server
+      # --------------------
+      - name: Install web-server dependencies
+        working-directory: ./web-server
+        run: npm install
 
-      # Build and push web-app
-      - name: Build and Push Web App
+      - name: Build & Push Web Server image
         run: |
-          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY=web-server
           IMAGE_TAG=latest
-          WEB_REPO=${{ secrets.WEB_REPOSITORY }}
 
-          docker build -t $ECR_REGISTRY/$WEB_REPO:$IMAGE_TAG ./web-app
-          docker push $ECR_REGISTRY/$WEB_REPO:$IMAGE_TAG
+          cd web-server
+          echo "Building Web Server image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Build and push app-server
-      - name: Build and Push App Server
+      # --------------------
+      # Build & Push App Server
+      # --------------------
+      - name: Install app-server dependencies
+        working-directory: ./app-server
+        run: npm install
+
+      - name: Build & Push App Server image
         run: |
-          ECR_REGISTRY=${{ secrets.AWS_ACCOUNT_ID }}.dkr.ecr.${{ secrets.AWS_REGION }}.amazonaws.com
+          ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
+          ECR_REPOSITORY=app-server
           IMAGE_TAG=latest
-          APP_REPO=${{ secrets.APP_REPOSITORY }}
 
-          docker build -t $ECR_REGISTRY/$APP_REPO:$IMAGE_TAG ./app-server
-          docker push $ECR_REGISTRY/$APP_REPO:$IMAGE_TAG
+          cd app-server
+          echo "Building App Server image: $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      # Update kubeconfig
+      # --------------------
+      # Deploy to EKS
+      # --------------------
       - name: Update kubeconfig
-        run: aws eks update-kubeconfig --region ${{ secrets.AWS_REGION }} --name test-cluster
+        run: aws eks update-kubeconfig --region us-east-1 --name test-cluster
 
-      # Deploy both apps
-      - name: Deploy to EKS
+      - name: Deploy manifests
         run: |
-          kubectl apply -f web-app/k8s/web-deployment.yaml
-          kubectl apply -f web-app/k8s/web-service.yaml
+          kubectl apply -f web-server/k8s/web-deployment.yaml
+          kubectl apply -f web-server/k8s/web-service.yaml
           kubectl apply -f app-server/k8s/app-deployment.yaml
           kubectl apply -f app-server/k8s/app-service.yaml
-          
