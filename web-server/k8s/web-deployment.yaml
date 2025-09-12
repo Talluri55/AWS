@@ -16,7 +16,7 @@ spec:
     spec:
       containers:
       - name: web
-        image: 637423260681.dkr.ecr.us-east-1.amazonaws.com/web-server:latest
+        image: 637423260681.dkr.ecr.us-east-1.amazonaws.com/test-web-app:latest
         ports:
         - containerPort: 3000
         env:
