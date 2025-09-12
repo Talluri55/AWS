@@ -90,3 +90,4 @@ jobs:
           kubectl apply -f web-server/k8s/web-service.yaml
           kubectl apply -f app-server/k8s/app-deployment.yaml
           kubectl apply -f app-server/k8s/app-service.yaml
+
