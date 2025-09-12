@@ -55,15 +55,15 @@ jobs:
         run: |
           ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
           IMAGE_TAG=latest
-          docker build -t $ECR_REGISTRY/web-server:$IMAGE_TAG ./web-server
-          docker push $ECR_REGISTRY/web-server:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/test-web-app:$IMAGE_TAG ./web-server
+          docker push $ECR_REGISTRY/test-web-app:$IMAGE_TAG
 
       - name: Build & Push App Server image
         run: |
           ECR_REGISTRY=637423260681.dkr.ecr.us-east-1.amazonaws.com
           IMAGE_TAG=latest
-          docker build -t $ECR_REGISTRY/app-server:$IMAGE_TAG ./app-server
-          docker push $ECR_REGISTRY/app-server:$IMAGE_TAG
+          docker build -t $ECR_REGISTRY/test-app-server:$IMAGE_TAG ./app-server
+          docker push $ECR_REGISTRY/test-app-server:$IMAGE_TAG
 
   deploy:
     runs-on: ubuntu-latest
